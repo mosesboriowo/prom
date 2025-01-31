@@ -62,15 +62,21 @@ sudo systemctl start prometheus
 echo "Installing Grafana..."
 
 # Grafana version
-GRAFANA_VERSION="9.5.0"
 
 # Add Grafana APT repository
-sudo apt-get install -y software-properties-common
-sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+sudo apt-get install -y apt-transport-https software-properties-common wget
+sudo mkdir -p /etc/apt/keyrings/
+wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+
+#Add repo for stable release
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+
+#update the packages
+# Updates the list of available packages
 sudo apt-get update
 
 # Install Grafana
-sudo apt-get install grafana=${GRAFANA_VERSION} -y
+sudo apt-get install grafana -y
 
 # Enable and start Grafana service
 sudo systemctl enable grafana-server
